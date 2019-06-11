@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.things.factory.dd" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>DeviceDiscover</name>
+    <description>
+    </description>
+    <allow-navigation href="*" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <icon density="mdpi" src="./assets/images/hatiolab-logo.png" />
+        <icon density="xhdpi" src="./assets/images/hatiolab-logo.png" />
+        <icon density="xxhdpi" src="./assets/images/hatiolab-logo.png" />
+        <icon density="xxxhdpi" src="./assets/images/hatiolab-logo.png" />
+    </platform>
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
+    <plugin name="cordova-plugin-ssdp" spec="https://github.com/things-factory/cordova-plugin-ssdp.git" />
+    <engine name="android" spec="^7.1.4" />
+</widget>
