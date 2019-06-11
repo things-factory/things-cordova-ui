@@ -5,6 +5,7 @@ yarn*.*
 package-lock.json
 db.sqlite
 .DS_Store
-.vscodeplatforms/
+.vscode
+platforms/
 plugins/
 www/
