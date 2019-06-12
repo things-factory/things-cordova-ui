@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require('electron')
 const url = require('url')
 const path = require('path')
 
-require('../node-ssdp/index.js')
+require('device-discover-node')
 
 
 // Keep a global reference of the window object, if you don't, the window will
