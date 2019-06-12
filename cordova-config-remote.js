@@ -79,7 +79,6 @@ const fixfile = (filepath, target, replacement) => {
 const webpackconfigdevpath = './node_modules/@things-factory/shell/webpack.config.dev.js'
 // serve:dev를 다시 해줘야 됨.
 fixfile(webpackconfigdevpath, "publicPath: '/'", "publicPath: 'http://192.168.1.16:3000/'")
-// fixfile(webpackconfigdevpath, "publicPath: '/'", "publicPath: './'")
 
 // 7. fix @things-factory/shell's js src
 fixfile(indexpath, '<base href="/" />', '<base href="./" />')

@@ -30,8 +30,7 @@
   "dependencies": {
     "@things-factory/layout-base": "*",
     "@things-factory/shell": "*",
-    "android": "0.0.8",
-    "cordova-android": "^7.1.4",
+    "cordova-android": "8.0.0",
     "cordova-plugin-ssdp": "git+https://github.com/things-factory/cordova-plugin-ssdp.git",
     "cordova-plugin-whitelist": "^1.3.3"
   },
@@ -46,15 +45,19 @@
     "@things-factory/resource-ui": "*",
     "@things-factory/setting-ui": "*",
     "add": "^2.0.6",
+    "electron": "^5.0.3",
     "insert-line": "^1.1.0"
   },
   "cordova": {
-    "platforms": [
-      "android"
-    ],
     "plugins": {
       "cordova-plugin-whitelist": {},
       "cordova-plugin-ssdp": {}
-    }
-  }
+    },
+    "platforms": [
+      "android"
+    ]
+  },
+  "files": [
+    "dist-client"
+  ]
 }
