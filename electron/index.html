@@ -51,13 +51,12 @@
   <script>
     const BASE_URL = localStorage.getItem('things-factory.shell.BASE_URL');
     if (!BASE_URL) {
-      localStorage.setItem('setting.srcUrl', "http://192.168.1.16:3000");
+      localStorage.setItem('setting.srcUrl', "http://192.168.1.42:3000");
     }
 
+    // window.location.href = BASE_URL + '/' + 'cordova-ui-example';
     window.location.href = BASE_URL;
   </script>
-
-  <script type="text/javascript" src="http://192.168.1.16:3000/main.js"></script>
 </body>
 
 </html>

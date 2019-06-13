@@ -1,9 +1,7 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
-
-require('device-discover-node')
-
+const dd = require('device-discover-node')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -41,7 +39,7 @@ function createWindow() {
   // )
   win.loadURL(
     url.format({
-      pathname: path.join(__dirname, `electron.html`),
+      pathname: path.join(__dirname, `index.html`),
       protocol: 'file:',
       slashes: true
     })
@@ -80,6 +78,12 @@ app.on('activate', () => {
   if (win === null) {
     createWindow()
   }
+})
+
+ipcMain.on('search-device', (e, st) => {
+  // console.log(`search: ${st}`)
+  console.log(st)
+  dd.search(st)
 })
 
 // In this file you can include the rest of your app's specific main process

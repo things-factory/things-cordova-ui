@@ -25,6 +25,7 @@
     "copy:debug": "cp -a dist-client/* www",
     "reinstall:plugin": "cordova plugin remove cordova-plugin-ssdp && cordova plugin add https://github.com/things-factory/cordova-plugin-ssdp.git",
     "start:android": "npm run build:mobile && npm run copy:debug && cordova run android",
+    "start:electron": "electron electron/main.js",
     "restart:android": "npm run build:client && npm run reinstall:plugin && npm run start:android"
   },
   "dependencies": {

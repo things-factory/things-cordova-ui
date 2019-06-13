@@ -79,6 +79,8 @@ const fixfile = (filepath, target, replacement) => {
 const webpackconfigdevpath = './node_modules/@things-factory/shell/webpack.config.dev.js'
 // serve:dev를 다시 해줘야 됨.
 fixfile(webpackconfigdevpath, "publicPath: '/'", "publicPath: 'http://192.168.1.16:3000/'")
+// device-discover-button의 electron api에서 nodejs 라이브러리를 사용함.
+appendContent(webpackconfigdevpath, "target: 'electron-renderer',", 36)
 
 // 7. fix @things-factory/shell's js src
 fixfile(indexpath, '<base href="/" />', '<base href="./" />')
@@ -111,10 +113,9 @@ fixfile(
 // static html file: ex: find <setting>
 appendContent(
   './node_modules/@things-factory/shell/client/actions/route.js',
-  " if (path.indexOf('/android_asset/www/') >= 0) { path = path.replace('/android_asset/www/', '192.168.1.16:3000/') }",
+  " if (path.indexOf('/android_asset/www/') >= 0) { path = path.replace('/android_asset/www/', '192.168.1.42:3000/') }",
   10
 )
-
 
 var bodyappend = `
     <script>

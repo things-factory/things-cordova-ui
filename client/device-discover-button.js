@@ -25,8 +25,10 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
 
   static get properties() {
     return {
+      discoverType: String, // M(mobile), D(desktop)
       buttonIconCls: String,
-      buttonIcon: String
+      buttonIcon: String,
+      devices: Object
     }
   }
 
@@ -37,14 +39,25 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     super()
 
     this.buttonIconCls = 'material-icons'
-    // this.buttonIcon = 'cloud'
     this.buttonIcon = 'settings_input_antenna'
   }
 
   render() {
-    if (typeof ssdp === 'undefined') {
-      return html``
-    } else {
+    if (typeof ssdp != 'undefined') {
+      this.discoverType = 'M'
+    } else if (!this.electron) {
+      let electron = require('electron')
+      if (electron) {
+        this.discoverType = 'D'
+        let ipcRenderer = electron.ipcRenderer
+        ipcRenderer.on('search-success-callback', this._searchSuccessCallback)
+        ipcRenderer.on('search-error-callback', this._searchErrorCallback)
+
+        this.electron = electron
+      }
+    }
+
+    if (this.discoverType) {
       return html`
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <button @click=${this._onClick}><i class=${this.buttonIconCls}>${this.buttonIcon}</i></button>
@@ -63,8 +76,13 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
   }
 
   _onClick(e) {
-    if (this.searchable) {
-      ssdp.search()
+    if (this.discoverType === 'M') {
+      ssdp.search()  
+    } else if (this.discoverType === 'D') {
+      const ipcRenderer = this.electron.ipcRenderer
+      if (ipcRenderer) {
+        ipcRenderer.send('search-device', 'urn:things-factory:device:all:all')
+      }
     }
   }
 
