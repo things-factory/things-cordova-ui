@@ -56,6 +56,16 @@ function createWindow() {
     // when you should delete the corresponding element.
     win = null
   })
+
+  // 'urn:things-factory:device:browser:chrome', 
+  dd.listen(message => {
+    win.webContents.send('discovered-device', message)
+  })
+
+  ipcMain.on('search-device', (e, st) => {
+    // console.log(`search: ${st}`)
+    dd.search(st)
+  })
 }
 
 // This method will be called when Electron has finished
@@ -80,11 +90,7 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on('search-device', (e, st) => {
-  // console.log(`search: ${st}`)
-  console.log(st)
-  dd.search(st)
-})
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -106,14 +106,14 @@ fixfile(
 // Fetch API cannot load file:///graphql. URL scheme "file" is not supported.
 fixfile(
   './node_modules/@things-factory/shell/client/graphql-client.js',
-  'GRAPHQL_URI,',
-  "uri: localStorage.getItem('things-factory.shell.BASE_URL') + GRAPHQL_URI,"
+  '  GRAPHQL_URI,',
+  "  uri: localStorage.getItem('things-factory.shell.BASE_URL') + uri,"
 )
 
 // static html file: ex: find <setting>
 appendContent(
   './node_modules/@things-factory/shell/client/actions/route.js',
-  " if (path.indexOf('/android_asset/www/') >= 0) { path = path.replace('/android_asset/www/', '192.168.1.42:3000/') }",
+  " if (path.indexOf('/android_asset/www/') >= 0) { path = path.replace('/android_asset/www/', '192.168.1.16:3000/') }",
   10
 )
 
@@ -145,29 +145,21 @@ var ssdplogic = `
         'deviceready',
         () => {
           if (ssdp) {
-            ssdp.listen((message1, message2) => {
+            ssdp.listen('urn:things-factory:device:all:all', (message1, message2) => {
               console.log('listen success:', message1, message2);
             }, (error) => {
-              console.log('listen error:', error);
+              console.warn('listen error:', error);
             });
 
-            ssdp.search((message) => {
-              console.log('search success:', message);
+            ssdp.search('urn:things-factory:device:all:all', (message) => {
               try {
                 let response = JSON.parse(message);
-                if (response.st.indexOf('things-factory:server') < 0) {
-                  return;
-                }
-                if (response.location != localStorage.getItem('things-factory.shell.BASE_URL')) {
-                  localStorage.setItem('things-factory.shell.BASE_URL', response.location)
-                  location.reload();
-                  console.log(response)
-                }
+                console.log(response)
               } catch (e) {
-                console.log(e);
+                console.warn(e);
               }
             }, (error) => {
-              console.log('search error:', error); 
+              console.log('search error:', error);
             });
           }
         },

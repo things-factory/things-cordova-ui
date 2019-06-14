@@ -28,6 +28,7 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
       discoverType: String, // M(mobile), D(desktop)
       buttonIconCls: String,
       buttonIcon: String,
+      st: String,
       devices: Object
     }
   }
@@ -40,6 +41,8 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
 
     this.buttonIconCls = 'material-icons'
     this.buttonIcon = 'settings_input_antenna'
+
+    this.st = 'urn:things-factory:device:all:all' // FIXME
   }
 
   render() {
@@ -50,8 +53,9 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
       if (electron) {
         this.discoverType = 'D'
         let ipcRenderer = electron.ipcRenderer
-        ipcRenderer.on('search-success-callback', this._searchSuccessCallback)
-        ipcRenderer.on('search-error-callback', this._searchErrorCallback)
+        ipcRenderer.on('discovered-device', (e, response) => {
+          this._discoverDeviceCallback.call(this, response)
+        })
 
         this.electron = electron
       }
@@ -66,18 +70,21 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     }
   }
 
-  firstUpdated() {
-  }
+  firstUpdated() {}
 
-  updated(changedProps) {
-    if (!this.available) {
-      return
-    }
-  }
+  updated(changedProps) {}
 
   _onClick(e) {
     if (this.discoverType === 'M') {
-      ssdp.search()  
+      ssdp.search(
+        this.st,
+        response => {
+          this._searchSuccessCallback.call(this, response)
+        },
+        error => {
+          this._searchErrorCallback.call(this, error)
+        }
+      )
     } else if (this.discoverType === 'D') {
       const ipcRenderer = this.electron.ipcRenderer
       if (ipcRenderer) {
@@ -94,7 +101,33 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     console.log(result)
   }
 
-  _searchSuccessCallback(result, response) {
+  _discoverDeviceCallback(response) {
+    console.log(response)
+
+    try {
+      var info = JSON.parse(response)
+    } catch (e) {
+      console.warn(e)
+    }
+
+    if (!info || !info.loaction) {
+      return
+    }
+
+    this.dispatchEvent(
+      new CustomEvent('device-discovered', {
+        bubbles: true,
+        composed: true,
+        detail: { response: response }
+      })
+    )
+  }
+
+  _searchSuccessCallback(result) {
+    if (!result) {
+      return
+    }
+
     this.dispatchEvent(
       new CustomEvent('ssdp-search-success', {
         bubbles: true,
@@ -104,8 +137,11 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     )
   }
 
-  _searchErrorCallback() {
-    console.log('errorCallback')
+  _searchErrorCallback(result) {
+    if (!result) {
+      return
+    }
+
     this.dispatchEvent(
       new CustomEvent('ssdp-search-error', {
         bubbles: true,

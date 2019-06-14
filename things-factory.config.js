@@ -5,8 +5,8 @@ export default {
   route,
   routes: [
     {
-      tagname: 'cordova-ui-example-page',
-      page: 'cordova-ui-example'
+      tagname: 'hybrid-ui-example-page',
+      page: 'hybrid-ui-example'
     }
   ],
   bootstrap

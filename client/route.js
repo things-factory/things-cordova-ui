@@ -1,7 +1,7 @@
 export default function route(page) {
   switch (page) {
-    case 'cordova-ui-example':
-      import('./pages/cordova-ui-example-page')
+    case 'hybrid-ui-example':
+      import('./pages/hybrid-ui-example-page')
       return page
   }
 }

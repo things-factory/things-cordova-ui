@@ -5,16 +5,16 @@ import { store, PageView } from '@things-factory/shell'
 import logo from '../../assets/images/hatiolab-logo.png'
 import '../device-discover-button'
 
-class CordovaUiExamplePage extends connect(store)(PageView) {
+class HybridUiExamplePage extends connect(store)(PageView) {
   static get properties() {
     return {
-      thingsCordovaUi: String
+      HybridUi: String
     }
   }
   render() {
     return html`
       <section>
-        <h2>ThingsCordovaUi</h2>
+        <h2>HybridUi</h2>
         <img src=${logo}></img>
       </section>
 
@@ -25,4 +25,4 @@ class CordovaUiExamplePage extends connect(store)(PageView) {
   stateChanged(state) {}
 }
 
-window.customElements.define('cordova-ui-example-page', CordovaUiExamplePage)
+window.customElements.define('hybrid-ui-example-page', HybridUiExamplePage)
