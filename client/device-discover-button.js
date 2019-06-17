@@ -72,9 +72,17 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
 
   firstUpdated() {}
 
-  updated(changedProps) {}
+  updated(changedProps) {
+    if (changedProps.has('st') && this.st) {
+      this.search()
+    }
+  }
 
   _onClick(e) {
+    this.search()
+  }
+
+  search() {
     if (this.discoverType === 'M') {
       ssdp.search(
         this.st,
@@ -124,29 +132,21 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
   }
 
   _searchSuccessCallback(result) {
-    if (!result) {
-      return
-    }
-
     this.dispatchEvent(
       new CustomEvent('ssdp-search-success', {
         bubbles: true,
         composed: true,
-        detail: { result: result }
+        detail: { result }
       })
     )
   }
 
   _searchErrorCallback(result) {
-    if (!result) {
-      return
-    }
-
     this.dispatchEvent(
       new CustomEvent('ssdp-search-error', {
         bubbles: true,
         composed: true,
-        detail: { result: result }
+        detail: { result }
       })
     )
   }
