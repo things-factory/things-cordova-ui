@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { connect } from 'pwa-helpers'
 import { store } from '@things-factory/shell'
 
-class CameraButton extends connect(store)(LitElement) {
+class CameraGalleryButton extends connect(store)(LitElement) {
   static get styles() {
     return [
       css`
@@ -25,41 +25,36 @@ class CameraButton extends connect(store)(LitElement) {
 
   static get properties() {
     return {
-      available: Boolean,
-      hidden: Boolean,
       buttonIconCls: String,
       buttonIcon: String,
-      result: String,
+      result: {
+        type: String,
+        reflect: true
+      },
 
       options: Object,
       quality: Number,
-      destinationType: Number,
-      sourceType: Number,
+      destinationType: Number, // Camera.DestinationType.DATA_URL, Camera.DestinationType.FILE_URI, Camera.DestinationType.NATIVE_URI
+      sourceType: Number, // Camera.PictureSourceType.CAMERA(1), Camera.PictureSourceType.PHOTOLIBRARY(0)
       allowEdit: Boolean,
       encodingType: Number,
       // targetWidth: ,
       // targetHeight: ,
       // VIDEO(Allow selection of video only, ONLY RETURNS URL), ALLMEDIA(Allow selection from all media types)
-      mediaType: Number,
+      mediaType: Number, // Camera.MediaType.PICTURE, Camera.MediaType.VIDEO, Camera.MediaType.ALLMEDIA
       correctOrientation: Boolean,
       saveToPhotoAlbum: Boolean,
       // popoverOptions: Camera.CameraPopoverOptions. // iOS-only options that specify popover location in iPad.
-      cameraDirection: Number
+      cameraDirection: Number // Camera.Direction.BACK, Camera.Direction.FRONT
     }
   }
 
   constructor() {
     super()
-
-    this.available = false
-    this.hidden = true
-    this.buttonIconCls = 'material-icons'
-    this.buttonIcon = 'camera'
-    this.options = {}
   }
 
   render() {
-    if (typeof ssdp === 'undefined') {
+    if (typeof cordova === 'undefined') {
       return html``
     } else {
       return html`
@@ -77,6 +72,18 @@ class CameraButton extends connect(store)(LitElement) {
 
       Object.assign(this.options, { key: this[key] })
     })
+
+    if (changedProps.has('sourceType') && this.sourceType) {
+      if (this.sourceType === Camera.PictureSourceType.CAMERA) {
+        this.buttonIconCls = 'material-icons'
+        this.buttonIcon = 'camera'
+        this.options = {}
+      } else if (this.sourceType === Camera.PictureSourceType.PHOTOLIBRARY) {
+        this.buttonIconCls = 'material-icons'
+        this.buttonIcon = 'photo'
+        this.options = {}
+      }
+    }
   }
 
   _onClick(e) {
@@ -85,52 +92,46 @@ class CameraButton extends connect(store)(LitElement) {
 
   openCamera() {
     if (typeof camera === 'undefined') {
-      return
+      window.camera = navigator.camera
     }
 
     camera.getPicture(
-      this._successCallback,
-      this._errorCallback,
-      Object.assign(
-        {
-          sourceType: Camera.PictureSourceType.CAMERA
-        },
-        this.options
-      )
+      result => {
+        this.result = result
+        this._successCallback.call(this, result)
+      },
+      result => {
+        this._errorCallback.call(this, result)
+      },
+      {
+        sourceType: this.sourceType,
+        ...this.options
+      }
     )
   }
 
   _successCallback(result) {
-    dispatch({
-      type: UPDATE_CAMERA_RESULT,
-      result: result
-    })
-
+    console.log('camera-gallery: _successCallback')
+    this.result = result
     this.dispatchEvent(
-      new CustomEvent('camera-success', {
+      new CustomEvent('get-picture-success', {
         bubbles: true,
         composed: true,
-        detail: { result: result }
+        detail: { result }
       })
     )
   }
 
-  _errorCallback() {
-    console.log('errorCallback')
+  _errorCallback(result) {
+    console.log('camera-gallery: _errorCallback')
     this.dispatchEvent(
-      new CustomEvent('camera-error', {
+      new CustomEvent('get-picture-error', {
         bubbles: true,
         composed: true,
-        detail: { result: result }
+        detail: { result }
       })
     )
-  }
-
-  stateChanged(state) {
-    if (state.camera) {
-      this.hidden = state.camera.hidden
-    }
   }
 }
 
-customElements.define('camera-button', CameraButton)
+customElements.define('camera-gallery-button', CameraGalleryButton)
