@@ -90,7 +90,9 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     super()
 
     this.ttsTextImm = 'Hello World, Hello Korea, Hello HatioLab~~~~~ '
-    this.ttsText = `Egypt has one of the longest histories of any country, 
+    this.ttsText1 = `Korea is a region in East Asia,[3] divided between two distinct sovereign states, North Korea and South Korea since 1948. `
+    this.ttsText2 = `China (Chinese: 中国; pinyin: Zhōngguó; lit. "middle country"), officially the People's Republic of China (PRC), is a country in East Asia and the world's most populous country, with a population of around 1.404 billion`
+    this.ttsText3 = `Egypt has one of the longest histories of any country, 
       tracing its heritage back to the 6th–4th millennia BCE. Considered a cradle of civilisation`
   }
 
@@ -156,7 +158,6 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           </h1>
           <div>
             <device-discover-button @device-discovered="${this._onDeviceDiscovered}"></device-discover-button>
-            <ul></ul>
           </div>
         </section>
 
@@ -166,11 +167,23 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed4">TTS</label>
           </h1>
-          <div>
-            <input value="${this.ttsText}"></input>
-            <button @click="${this._onSpeak}">SPEAK</button>
-            <input value="${this.ttsTextImm}"></input>
-            <button @click="${this._onSpeakImmediate}">SPEAK IMMEDIATE</button>
+          <div style="display:block">
+            <div>
+              <input style="width: 80%" value="${this.ttsText1}"></input>
+              <button @click="${this._onSpeak1}">SPEAK</button>
+            </div>
+            <div>
+              <input style="width: 80%" value="${this.ttsText2}"></input>
+              <button @click="${this._onSpeak2}">SPEAK</button>
+            </div>
+            <div>
+              <input style="width: 80%" value="${this.ttsText3}"></input>
+              <button @click="${this._onSpeak3}">SPEAK</button>
+            </div>
+            <div>
+              <input style="width: 80%" value="${this.ttsTextImm}"></input>
+              <button @click="${this._onSpeakImmediate}">SPEAK IMMEDIATE</button>
+            </div>
           </div>
         </section>
 
@@ -224,8 +237,16 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     console.log(e.detail.result)
   }
 
-  _onSpeak(e) {
-    THTTS.speak(this.ttsText)
+  _onSpeak1(e) {
+    THTTS.speak(this.ttsText1)
+  }
+
+  _onSpeak2(e) {
+    THTTS.speak(this.ttsText2)
+  }
+
+  _onSpeak3(e) {
+    THTTS.speak(this.ttsText3)
   }
 
   _onSpeakImmediate(e) {
@@ -233,12 +254,12 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   }
 }
 
-// <!-- dom-repeat -->
-// ${this.devices.map(
-//   i =>
-//     html`
-//       <li>${i}</li>
-//     `
-// )}
-
 window.customElements.define('hybrid-ui-example-page', HybridUiExamplePage)
+
+
+// ${this.devices.map(
+//               i =>
+//                 html`
+//                   <li>${i}</li>
+//                 `
+//             )}
