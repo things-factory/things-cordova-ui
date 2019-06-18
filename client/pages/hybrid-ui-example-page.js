@@ -5,7 +5,7 @@ import { store, PageView } from '@things-factory/shell'
 import logo from '../../assets/images/hatiolab-logo.png'
 import '../device-discover-button'
 import '../camera-gallery-button'
-import '../en-tts'
+import '../global-tts'
 
 class HybridUiExamplePage extends connect(store)(PageView) {
   static get styles() {
@@ -88,20 +88,13 @@ class HybridUiExamplePage extends connect(store)(PageView) {
 
   constructor() {
     super()
-    self.devices = ['a']
+
+    this.ttsTextImm = 'Hello World, Hello Korea, Hello HatioLab~~~~~ '
+    this.ttsText = `Egypt has one of the longest histories of any country, 
+      tracing its heritage back to the 6th–4th millennia BCE. Considered a cradle of civilisation`
   }
 
   render() {
-    html`
-      ${this.myBool
-        ? html`
-            <p>foo</p>
-          `
-        : html`
-            <p>bar</p>
-          `}
-    `
-
     var cameraTemp = html`
       ${this.cameraImage
         ? html`
@@ -164,20 +157,44 @@ class HybridUiExamplePage extends connect(store)(PageView) {
             <label for="tabbed3">devices</label>
           </h1>
           <div>
-            <device-discover-button @device-discovered="${}"></device-discover-button>
+            <device-discover-button @device-discovered="${this._onDeviceDiscovered}"></device-discover-button>
             <ul></ul>
           </div>
         </section>
 
         <input name="tabbed" id="tabbed4" type="radio" />
         <section>
+          <global-tts></global-tts>
           <h1>
             <label for="tabbed4">TTS</label>
           </h1>
           <div>
-            <!-- content -->
+            <input value="${this.ttsText}"></input>
+            <button @click="${this._onSpeak}">SPEAK</button>
+            <input value="${this.ttsTextImm}"></input>
+            <button @click="${this._onSpeakImmediate}">SPEAK IMMEDIATE</button>
           </div>
         </section>
+
+        <!--<input name="tabbed" id="tabbed5" type="radio" />
+        <section>
+          <h1>
+            <label for="tabbed5">OCR</label>
+          </h1>
+          <div>
+            
+          </div>
+        </section>
+
+        <input name="tabbed" id="tabbed6" type="radio" />
+        <section>
+          <h1>
+            <label for="tabbed6">BARCODE-SCANNER</label>
+          </h1>
+          <div>
+            
+          </div>
+        </section>-->
       </div>
     `
   }
@@ -196,6 +213,18 @@ class HybridUiExamplePage extends connect(store)(PageView) {
 
   _onGetPictureError(e) {
     console.log(e.detail.result)
+  }
+
+  _onDeviceDiscovered(e) {
+    console.log(e.detail.result)
+  }
+
+  _onSpeak(e) {
+    THTTS.speak(this.ttsText)
+  }
+
+  _onSpeakImmediate(e) {
+    THTTS.speakImmediate(this.ttsTextImm)
   }
 }
 
