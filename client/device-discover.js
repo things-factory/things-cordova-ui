@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { connect } from 'pwa-helpers'
 import { store } from '@things-factory/shell'
 
-class DeviceDiscoverButton extends connect(store)(LitElement) {
+class DeviceDiscover extends connect(store)(LitElement) {
   static get styles() {
     return [
       css`
@@ -49,15 +49,19 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     if (typeof ssdp != 'undefined') {
       this.discoverType = 'M'
     } else if (!this.electron) {
-      let electron = require('electron')
-      if (electron) {
-        this.discoverType = 'D'
-        let ipcRenderer = electron.ipcRenderer
-        ipcRenderer.on('discovered-device', (e, response) => {
-          this._discoverDeviceCallback.call(this, response)
-        })
+      try {
+        let electron = require('electron')
+        if (electron) {
+          this.discoverType = 'D'
+          let ipcRenderer = electron.ipcRenderer
+          ipcRenderer.on('discovered-device', (e, response) => {
+            this._discoverDeviceCallback.call(this, response)
+          })
 
-        this.electron = electron
+          this.electron = electron
+        }
+      } catch (e) {
+        console.log("It's not electron environment")
       }
     }
 
@@ -86,11 +90,19 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     if (this.discoverType === 'M') {
       ssdp.search(
         this.st,
-        response => {
-          this._searchSuccessCallback.call(this, response)
+        result => {
+          if (typeof this.successCallback === 'string') {
+            eval(this.successCallback).call(this, result)
+          } else {
+            this.successCallback.call(this, result)
+          }
         },
         error => {
-          this._searchErrorCallback.call(this, error)
+          if (typeof this.errorCallback === 'string') {
+            eval(this.errorCallback).call(this, result)
+          } else {
+            this.errorCallback.call(this, error)
+          }
         }
       )
     } else if (this.discoverType === 'D') {
@@ -122,6 +134,8 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
       return
     }
 
+    // TODO update state
+
     this.dispatchEvent(
       new CustomEvent('device-discovered', {
         bubbles: true,
@@ -131,7 +145,7 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     )
   }
 
-  _searchSuccessCallback(result) {
+  successCallback(result) {
     this.dispatchEvent(
       new CustomEvent('ssdp-search-success', {
         bubbles: true,
@@ -141,7 +155,7 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
     )
   }
 
-  _searchErrorCallback(result) {
+  errorCallback(result) {
     this.dispatchEvent(
       new CustomEvent('ssdp-search-error', {
         bubbles: true,
@@ -156,4 +170,4 @@ class DeviceDiscoverButton extends connect(store)(LitElement) {
   }
 }
 
-customElements.define('device-discover-button', DeviceDiscoverButton)
+customElements.define('device-discover', DeviceDiscover)

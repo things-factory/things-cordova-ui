@@ -8,7 +8,9 @@ class GlobalTts extends connect(store)(LitElement) {
   }
 
   static get properties() {
-    return {}
+    return {
+      successCallback: Object
+    }
   }
 
   constructor() {
@@ -35,13 +37,19 @@ class GlobalTts extends connect(store)(LitElement) {
         locale: locale /* a string like 'en-US', 'zh-CN', etc */,
         rate: rate /** speed rate, 0 ~ 1 */
       },
-      () => {
-        // console.log('success');
-        this._successCallback.call(this)
+      result => {
+        if (typeof this.successCallback === 'string') {
+          eval(this.successCallback).call(this, result)
+        } else {
+          this.successCallback.call(this, result)
+        }
       },
-      reason => {
-        this._errorCallback.call(this, reason)
-        console.warn(reason)
+      error => {
+        if (typeof this.errorCallback === 'string') {
+          eval(this.errorCallback).call(this, result)
+        } else {
+          this.errorCallback.call(this, error)
+        }
       }
     )
   }
@@ -74,18 +82,26 @@ class GlobalTts extends connect(store)(LitElement) {
     this._isReading = true
     TTS.speak(
       obj,
-      () => {
-        this._successCallback.call(this)
+      result => {
+        if (typeof this.successCallback === 'string') {
+          eval(this.successCallback).call(this, result)
+        } else {
+          this.successCallback.call(this, result)
+        }
       },
-      reason => {
-        this._errorCallback.call(this, reason)
+      error => {
+        if (typeof this.errorCallback === 'string') {
+          eval(this.errorCallback).call(this, result)
+        } else {
+          this.errorCallback.call(this, error)
+        }
       }
     )
   }
 
-  _successCallback(result) {
+  successCallback(result) {
     this._recursiveSpeak()
-    console.log('tts: _successCallback')
+    console.log('tts: successCallback')
     this.result = result
     this.dispatchEvent(
       new CustomEvent('tts-success', {

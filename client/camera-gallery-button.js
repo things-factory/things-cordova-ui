@@ -99,11 +99,18 @@ class CameraGalleryButton extends connect(store)(LitElement) {
 
     camera.getPicture(
       result => {
-        this.result = result
-        this._successCallback.call(this, result)
+        if (typeof this.successCallback === 'string') {
+          eval(this.successCallback).call(this, result)
+        } else {
+          this.successCallback.call(this, result)
+        }
       },
-      result => {
-        this._errorCallback.call(this, result)
+      error => {
+        if (typeof this.errorCallback === 'string') {
+          eval(this.errorCallback).call(this, result)
+        } else {
+          this.errorCallback.call(this, error)
+        }
       },
       {
         sourceType: this.sourceType,
@@ -112,8 +119,8 @@ class CameraGalleryButton extends connect(store)(LitElement) {
     )
   }
 
-  _successCallback(result) {
-    console.log('camera-gallery: _successCallback')
+  successCallback(result) {
+    console.log('camera-gallery: successCallback')
     this.result = result
     this.dispatchEvent(
       new CustomEvent('get-picture-success', {
@@ -124,8 +131,8 @@ class CameraGalleryButton extends connect(store)(LitElement) {
     )
   }
 
-  _errorCallback(result) {
-    console.log('camera-gallery: _errorCallback')
+  errorCallback(result) {
+    console.log('camera-gallery: errorCallback')
     this.dispatchEvent(
       new CustomEvent('get-picture-error', {
         bubbles: true,
