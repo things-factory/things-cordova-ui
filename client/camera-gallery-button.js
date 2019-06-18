@@ -32,9 +32,9 @@ class CameraGalleryButton extends connect(store)(LitElement) {
         reflect: true
       },
 
-      options: Object,
+      _options: Object,
       quality: Number,
-      destinationType: Number, // Camera.DestinationType.DATA_URL, Camera.DestinationType.FILE_URI, Camera.DestinationType.NATIVE_URI
+      destinationType: Number, // Camera.DestinationType.DATA_URL(0), Camera.DestinationType.FILE_URI(default), Camera.DestinationType.NATIVE_URI
       sourceType: Number, // Camera.PictureSourceType.CAMERA(1), Camera.PictureSourceType.PHOTOLIBRARY(0)
       allowEdit: Boolean,
       encodingType: Number,
@@ -51,6 +51,8 @@ class CameraGalleryButton extends connect(store)(LitElement) {
 
   constructor() {
     super()
+
+    this._options = {}
   }
 
   render() {
@@ -66,22 +68,22 @@ class CameraGalleryButton extends connect(store)(LitElement) {
 
   updated(changedProps) {
     changedProps.forEach((oldValue, key) => {
-      if (key === 'options') {
+      if (key === '_options') {
         return
       }
 
-      Object.assign(this.options, { key: this[key] })
+      this._options[key] = this[key]
     })
 
     if (changedProps.has('sourceType') && this.sourceType) {
-      if (this.sourceType === Camera.PictureSourceType.CAMERA) {
+      if (this.sourceType == '1') {
+        // Camera.PictureSourceType.CAMERA
         this.buttonIconCls = 'material-icons'
         this.buttonIcon = 'camera'
-        this.options = {}
-      } else if (this.sourceType === Camera.PictureSourceType.PHOTOLIBRARY) {
+      } else {
+        // if (this.sourceType === 0) { // Camera.PictureSourceType.PHOTOLIBRARY
         this.buttonIconCls = 'material-icons'
         this.buttonIcon = 'photo'
-        this.options = {}
       }
     }
   }
@@ -105,7 +107,7 @@ class CameraGalleryButton extends connect(store)(LitElement) {
       },
       {
         sourceType: this.sourceType,
-        ...this.options
+        ...this._options
       }
     )
   }

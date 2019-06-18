@@ -100,19 +100,15 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         ? html`
             <img style="height:80%;width:90%" src=${this.cameraImage} alt="Camera Test" />
           `
-        : html`
-            <p>camera</p>
-          `}
+        : html``}
     `
 
     var galleryTemp = html`
       ${this.galleryImage
         ? html`
-            <img style="height:80%;width:90%" src=${this.cameraImage} alt="Camera Test" />
+            <img style="height:80%;width:90%" src=${this.galleryImage} alt="Camera Test" />
           `
-        : html`
-            <p>gallery</p>
-          `}
+        : html``}
     `
 
     return html`
@@ -125,9 +121,9 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           </h1>
           <div>
             <camera-gallery-button
-              sourceType="1"
+              sourceType=1
               .result="${this.cameraImage}"
-              @get-picture-success="${this._onGetPictureSuccess}"
+              @get-picture-success="${this._onGetPictureCameraSuccess}"
               @get-picture-error="${this._onGetPictureError}"
             >
             </camera-gallery-button>
@@ -143,10 +139,12 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           </h1>
           <div>
             <camera-gallery-button
-              sourceType="1"
-              @get-picture-success="${this._onGetPictureSuccess}"
+              sourceType=0
+              destinationType=0
+              @get-picture-success="${this._onGetPictureGallerySuccess}"
               @get-picture-error="${this._onGetPictureError}"
             >
+            </camera-gallery-button>
             ${galleryTemp}
           </div>
         </section>
@@ -205,14 +203,21 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     })
   }
 
-  _onGetPictureSuccess(e) {
+  _onGetPictureCameraSuccess(e) {
     var result = e.detail.result
-    // this.cameraImage = result
+    this.cameraImage = result
     console.log(result)
   }
 
-  _onGetPictureError(e) {
+  _onGetPictureGallerySuccess(e) {
+    var result = e.detail.result
+    this.galleryImage = 'data:image/jpeg;base64,' + result
     console.log(e.detail.result)
+  }
+
+  _onGetPictureError(e) {
+    var result = e.detail.result
+    console.warn(result)
   }
 
   _onDeviceDiscovered(e) {
