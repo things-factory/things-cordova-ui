@@ -34,7 +34,7 @@ class CameraGalleryButton extends connect(store)(LitElement) {
 
       _options: Object,
       quality: Number,
-      destinationType: Number, // Camera.DestinationType.DATA_URL(0), Camera.DestinationType.FILE_URI(default), Camera.DestinationType.NATIVE_URI
+      destinationType: Number, // Camera.DestinationType.DATA_URL(0), Camera.DestinationType.FILE_URI(default)
       sourceType: Number, // Camera.PictureSourceType.CAMERA(1), Camera.PictureSourceType.PHOTOLIBRARY(0)
       allowEdit: Boolean,
       encodingType: Number,
