@@ -16,9 +16,8 @@
     </platform>
     <platform name="electron">
         <allow-intent href="market:*" />
-        <icon src="./assets/images/hatiolab-logo.png" target="app"/>
-        <icon src="./assets/images/hatiolab-logo.png" target="installer"/>
+        <icon src="./assets/images/hatiolab-logo.png" target="app" />
+        <icon src="./assets/images/hatiolab-logo.png" target="installer" />
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-ssdp" spec="https://github.com/things-factory/cordova-plugin-ssdp.git" />
 </widget>
