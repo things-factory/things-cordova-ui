@@ -3,9 +3,11 @@ import { connect } from 'pwa-helpers/connect-mixin.js'
 import { store, PageView } from '@things-factory/shell'
 
 import logo from '../../assets/images/hatiolab-logo.png'
-import '../device-discover-button'
+import '../device-discover'
 import '../camera-gallery-button'
 import '../global-tts'
+import '../global-ocr'
+import '../barcode-scanner'
 
 class HybridUiExamplePage extends connect(store)(PageView) {
   static get styles() {
@@ -82,18 +84,24 @@ class HybridUiExamplePage extends connect(store)(PageView) {
       HybridUi: String,
       devices: String,
       cameraImage: String,
-      galleryImage: String
+      galleryImage1: String,
+      galleryImage2: String,
+      barcodeText: String
     }
   }
 
   constructor() {
     super()
 
-    this.ttsTextImm = 'Hello World, Hello Korea, Hello HatioLab~~~~~ '
+    this.ttsTextImm = 'Hello World, Hello HatioLab~~~~~ '
     this.ttsText1 = `Korea is a region in East Asia,[3] divided between two distinct sovereign states, North Korea and South Korea since 1948. `
     this.ttsText2 = `China (Chinese: 中国; pinyin: Zhōngguó; lit. "middle country"), officially the People's Republic of China (PRC), is a country in East Asia and the world's most populous country, with a population of around 1.404 billion`
     this.ttsText3 = `Egypt has one of the longest histories of any country, 
       tracing its heritage back to the 6th–4th millennia BCE. Considered a cradle of civilisation`
+
+    this.dummyCallback = result => {
+      console.log(`dummyCallback: ${result}`)
+    }
   }
 
   render() {
@@ -105,15 +113,28 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         : html``}
     `
 
-    var galleryTemp = html`
-      ${this.galleryImage
+    var galleryTemp1 = html`
+      ${this.galleryImage1
         ? html`
-            <img style="height:80%;width:90%" src=${this.galleryImage} alt="Camera Test" />
+            <img style="height:80%;width:90%" src=${this.galleryImage1} alt="Camera Test" />
+          `
+        : html``}
+    `
+
+    var galleryTemp2 = html`
+      ${this.galleryImage2
+        ? html`
+            <img style="height:80%;width:90%" src=${this.galleryImage2} alt="Camera Test" />
           `
         : html``}
     `
 
     return html`
+      <global-tts></global-tts>
+      <global-ocr></global-ocr>
+      <barcode-scanner></barcode-scanner>
+      <!--<global-tts successCallBack="${this.dummyCallback}"></global-tts>-->
+
       <div class="tabbed">
         <!-- first panel -->
         <input name="tabbed" id="tabbed1" type="radio" checked />
@@ -124,7 +145,6 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <div>
             <camera-gallery-button
               sourceType=1
-              .result="${this.cameraImage}"
               @get-picture-success="${this._onGetPictureCameraSuccess}"
               @get-picture-error="${this._onGetPictureError}"
             >
@@ -147,27 +167,28 @@ class HybridUiExamplePage extends connect(store)(PageView) {
               @get-picture-error="${this._onGetPictureError}"
             >
             </camera-gallery-button>
-            ${galleryTemp}
+            ${galleryTemp1}
           </div>
         </section>
 
+        <!-- third panel -->
         <input name="tabbed" id="tabbed3" type="radio" />
         <section>
           <h1>
             <label for="tabbed3">devices</label>
           </h1>
           <div>
-            <device-discover-button @device-discovered="${this._onDeviceDiscovered}"></device-discover-button>
+            <device-discover @device-discovered="${this._onDeviceDiscovered}"></device-discover>
           </div>
         </section>
 
+        
         <input name="tabbed" id="tabbed4" type="radio" />
         <section>
-          <global-tts></global-tts>
           <h1>
             <label for="tabbed4">TTS</label>
           </h1>
-          <div style="display:block">
+          <div>
             <div>
               <input style="width: 80%" value="${this.ttsText1}"></input>
               <button @click="${this._onSpeak1}">SPEAK</button>
@@ -187,25 +208,44 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           </div>
         </section>
 
-        <!--<input name="tabbed" id="tabbed5" type="radio" />
+        <input name="tabbed" id="tabbed5" type="radio" />
         <section>
           <h1>
             <label for="tabbed5">OCR</label>
           </h1>
           <div>
-            
+            <div>cordova-plugin-mobile-ocr: 동작안됨.</div>
+            <camera-gallery-button
+              sourceType=0
+              destinationType=0
+              @get-picture-success="${this._onGetPictureForOcrSuccess}"
+              @get-picture-error="${this._onGetPictureError}"
+            >
+            </camera-gallery-button>
+            ${galleryTemp2}
+          <input style="width: 80%" value="${this.ocrText}"></input>
           </div>
         </section>
 
         <input name="tabbed" id="tabbed6" type="radio" />
         <section>
           <h1>
-            <label for="tabbed6">BARCODE-SCANNER</label>
+            <label for="tabbed6">BARCODE</label>
           </h1>
           <div>
-            
+            <input style="width: 80%" value="${this.barcodeText}"></input>
+            <button @click="${this._onScanBarcode}">scan</button>
           </div>
-        </section>-->
+        </section>
+
+        <input name="tabbed" id="tabbed7" type="radio" />
+        <section>
+          <h1>
+            <label for="tabbed7">FP</label>
+          </h1>
+          <div>
+          </div>
+        </section>
       </div>
     `
   }
@@ -216,6 +256,11 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     })
   }
 
+  // not effect
+  // dummyCallback(result) {
+  //   console.log(`dummyCallback: ${result}`)
+  // }
+
   _onGetPictureCameraSuccess(e) {
     var result = e.detail.result
     this.cameraImage = result
@@ -224,7 +269,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
 
   _onGetPictureGallerySuccess(e) {
     var result = e.detail.result
-    this.galleryImage = 'data:image/jpeg;base64,' + result
+    this.galleryImage1 = 'data:image/jpeg;base64,' + result
     console.log(e.detail.result)
   }
 
@@ -252,10 +297,40 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   _onSpeakImmediate(e) {
     THTTS.speakImmediate(this.ttsTextImm)
   }
+
+  _onBarcodeRead(e) {
+    var result = e.detail.result
+    this.barcode = result
+  }
+
+  _onGetPictureForOcrSuccess(e) {
+    var result = 'data:image/jpeg;base64,' + e.detail.result
+    this.galleryImage2 = result
+
+    OCR.recText(
+      result => {
+        console.log(result)
+        this.ocrText = result
+      },
+      error => {
+        console.log(error)
+      },
+      result,
+      4
+    )
+  }
+
+  _onScanBarcode() {
+    SCANNER.scan(result => {
+      // {text: "91250728", format: "EAN_8", cancelled: false}
+      this.barcodeText = result.text
+    }, error => {
+      console.log(error)
+    })
+  }
 }
 
 window.customElements.define('hybrid-ui-example-page', HybridUiExamplePage)
-
 
 // ${this.devices.map(
 //               i =>
