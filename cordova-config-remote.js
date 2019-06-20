@@ -144,24 +144,29 @@ var ssdplogic = `
       document.addEventListener(
         'deviceready',
         () => {
-          if (ssdp) {
-            ssdp.listen('urn:things-factory:device:all:all', (message1, message2) => {
-              console.log('listen success:', message1, message2);
-            }, (error) => {
-              console.warn('listen error:', error);
-            });
-
-            ssdp.search('urn:things-factory:device:all:all', (message) => {
-              try {
-                let response = JSON.parse(message);
-                console.log(response)
-              } catch (e) {
-                console.warn(e);
-              }
-            }, (error) => {
-              console.log('search error:', error);
-            });
+          if (!ssdp) {
+            return
           }
+
+          ssdp.listen(
+            null,
+            (message) => {
+              console.log('listen success:', message)
+            },
+            error => {
+              console.warn('listen error:', error)
+            }
+          )
+
+          // ssdp.search(
+          //   this.st,
+          //   result => {
+          //     console.log('search success:', result)
+          //   },
+          //   error => {
+          //     console.log('search error:', error)
+          //   }
+          // )
         },
         false
       );

@@ -75,6 +75,11 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           position: relative;
           z-index: 2;
         }
+
+        .full {
+          width: 100%;
+          height: 100%;
+        }
       `
     ]
   }
@@ -82,11 +87,11 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   static get properties() {
     return {
       HybridUi: String,
-      devices: String,
+      devices: Object,
       cameraImage: String,
       galleryImage1: String,
       galleryImage2: String,
-      barcodeText: String
+      barcodeText: String,
     }
   }
 
@@ -98,7 +103,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     this.ttsText2 = `China (Chinese: 中国; pinyin: Zhōngguó; lit. "middle country"), officially the People's Republic of China (PRC), is a country in East Asia and the world's most populous country, with a population of around 1.404 billion`
     this.ttsText3 = `Egypt has one of the longest histories of any country, 
       tracing its heritage back to the 6th–4th millennia BCE. Considered a cradle of civilisation`
-
+    this.devices = []
     this.dummyCallback = result => {
       console.log(`dummyCallback: ${result}`)
     }
@@ -142,7 +147,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed1">camera</label>
           </h1>
-          <div>
+          <div class="full">
             <camera-gallery-button
               sourceType=1
               @get-picture-success="${this._onGetPictureCameraSuccess}"
@@ -159,7 +164,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed2">gallery</label>
           </h1>
-          <div>
+          <div class="full">
             <camera-gallery-button
               sourceType=0
               destinationType=0
@@ -177,8 +182,14 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed3">devices</label>
           </h1>
-          <div>
+          <div class="full">
             <device-discover @device-discovered="${this._onDeviceDiscovered}"></device-discover>
+            ${this.devices.map(
+              i =>
+                html`
+                  <li>${i}</li>
+                `
+            )}
           </div>
         </section>
 
@@ -188,7 +199,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed4">TTS</label>
           </h1>
-          <div>
+          <div class="full">
             <div>
               <input style="width: 80%" value="${this.ttsText1}"></input>
               <button @click="${this._onSpeak1}">SPEAK</button>
@@ -213,7 +224,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed5">OCR</label>
           </h1>
-          <div>
+          <div class="full">
             <div>cordova-plugin-mobile-ocr: 동작안됨.</div>
             <camera-gallery-button
               sourceType=0
@@ -232,7 +243,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed6">BARCODE</label>
           </h1>
-          <div>
+          <div class="full">
             <input style="width: 80%" value="${this.barcodeText}"></input>
             <button @click="${this._onScanBarcode}">scan</button>
           </div>
@@ -243,7 +254,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
           <h1>
             <label for="tabbed7">FP</label>
           </h1>
-          <div>
+          <div class="full">
           </div>
         </section>
       </div>
@@ -252,7 +263,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
 
   updated(changedProps) {
     changedProps.forEach((oldValue, key) => {
-      console.log(`changedProps: ${key}: ${this[key]}`)
+      // console.log(`changedProps: ${key}: ${this[key]}`)
     })
   }
 
@@ -262,24 +273,41 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   // }
 
   _onGetPictureCameraSuccess(e) {
+    if (!e.detail) {
+      return
+    }
+
     var result = e.detail.result
     this.cameraImage = result
     console.log(result)
   }
 
   _onGetPictureGallerySuccess(e) {
+    if (!e.detail) {
+      return
+    }
+
     var result = e.detail.result
     this.galleryImage1 = 'data:image/jpeg;base64,' + result
     console.log(e.detail.result)
   }
 
   _onGetPictureError(e) {
+    if (!e.detail) {
+      return
+    }
+
     var result = e.detail.result
     console.warn(result)
   }
 
   _onDeviceDiscovered(e) {
-    console.log(e.detail.result)
+    if (!e.detail) {
+      return
+    }
+
+    var result = e.detail.result
+    this.devices = [...this.devices, result]
   }
 
   _onSpeak1(e) {
@@ -331,10 +359,3 @@ class HybridUiExamplePage extends connect(store)(PageView) {
 }
 
 window.customElements.define('hybrid-ui-example-page', HybridUiExamplePage)
-
-// ${this.devices.map(
-//               i =>
-//                 html`
-//                   <li>${i}</li>
-//                 `
-//             )}

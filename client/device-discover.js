@@ -29,7 +29,8 @@ class DeviceDiscover extends connect(store)(LitElement) {
       buttonIconCls: String,
       buttonIcon: String,
       st: String,
-      devices: Object
+      selfSt: String,
+      devices: Array
     }
   }
 
@@ -91,6 +92,7 @@ class DeviceDiscover extends connect(store)(LitElement) {
       ssdp.search(
         this.st,
         result => {
+          // console.log(result)
           if (typeof this.successCallback === 'string') {
             eval(this.successCallback).call(this, result)
           } else {
@@ -99,7 +101,7 @@ class DeviceDiscover extends connect(store)(LitElement) {
         },
         error => {
           if (typeof this.errorCallback === 'string') {
-            eval(this.errorCallback).call(this, result)
+            eval(this.errorCallback).call(this, error)
           } else {
             this.errorCallback.call(this, error)
           }
@@ -108,7 +110,7 @@ class DeviceDiscover extends connect(store)(LitElement) {
     } else if (this.discoverType === 'D') {
       const ipcRenderer = this.electron.ipcRenderer
       if (ipcRenderer) {
-        ipcRenderer.send('search-device', 'urn:things-factory:device:all:all')
+        ipcRenderer.send('search-device', this.st)
       }
     }
   }
@@ -121,38 +123,29 @@ class DeviceDiscover extends connect(store)(LitElement) {
     console.log(result)
   }
 
-  _discoverDeviceCallback(response) {
-    console.log(response)
-
+  _discoverDeviceCallback(result) {
     try {
-      var info = JSON.parse(response)
+      var info = JSON.parse(result)
     } catch (e) {
       console.warn(e)
     }
 
-    if (!info || !info.loaction) {
+    if (!info || !info.location) {
       return
     }
 
-    // TODO update state
-
+    // TODO if update state
     this.dispatchEvent(
       new CustomEvent('device-discovered', {
         bubbles: true,
         composed: true,
-        detail: { response: response }
+        detail: { result: result }
       })
     )
   }
 
   successCallback(result) {
-    this.dispatchEvent(
-      new CustomEvent('ssdp-search-success', {
-        bubbles: true,
-        composed: true,
-        detail: { result }
-      })
-    )
+    this._discoverDeviceCallback(result)
   }
 
   errorCallback(result) {
