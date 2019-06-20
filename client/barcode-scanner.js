@@ -6,22 +6,6 @@ class BarcodeScanner extends connect(store)(LitElement) {
   static get styles() {
     return [
       css``
-
-      // css`
-      //   :host {
-      //     --cam-button-width: 40px;
-      //     --cam-button-height: 40px;
-      //     --cam-icon-color: gray;
-      //   }
-      //   button {
-      //     width: var(--cam-button-width);
-      //     height: var(--cam-button-height);
-      //     background-color: var(--secondary-light-color);
-      //   }
-      //   button i {
-      //     color: var(--cam-icon-color);
-      //   }
-      // `
     ]
   }
 
@@ -64,15 +48,6 @@ class BarcodeScanner extends connect(store)(LitElement) {
 
   render() {
     return html``
-
-    // if (typeof cordova === 'undefined') {
-    //   return html``
-    // } else {
-    //   return html`
-    //     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    //     <button @click=${this._onClick}><i class=${this.buttonIconCls}>${this.buttonIcon}</i></button>
-    //   `
-    // }
   }
 
   updated(changedProps) {
@@ -91,62 +66,21 @@ class BarcodeScanner extends connect(store)(LitElement) {
       return
     }
 
-    if (cordova.plugins.barcodeScanner == 'undefined') {
+    if (typeof cordova.plugins.barcodeScanner == 'undefined') {
       console.warn('barcodeScanner undefined')
       return
     }
 
     cordova.plugins.barcodeScanner.scan(
       result => {
-        successCallback.call(this, result)
+        successCallback && successCallback.call(this, result)
       },
       error => {
-          errorCallback.call(this, error)
+        errorCallback && errorCallback.call(this, error)
       },
       this._options
     )
-
-    // cordova.plugins.barcodeScanner.scan(
-    //   result => {
-    //     if (typeof this.successCallback === 'string') {
-    //       eval(this.successCallback).call(this, result)
-    //     } else {
-    //       this.successCallback.call(this, result)
-    //     }
-    //   },
-    //   error => {
-    //     if (typeof this.errorCallback === 'string') {
-    //       eval(this.errorCallback).call(this, result)
-    //     } else {
-    //       this.errorCallback.call(this, error)
-    //     }
-    //   },
-    //   this._options
-    // )
   }
-
-  // successCallback(result) {
-  //   console.log('barcode-scan: successCallback')
-  //   this.result = result
-  //   this.dispatchEvent(
-  //     new CustomEvent('barcode-scan-success', {
-  //       bubbles: true,
-  //       composed: true,
-  //       detail: { result }
-  //     })
-  //   )
-  // }
-
-  // errorCallback(result) {
-  //   console.log('barcode-scan: errorCallback')
-  //   this.dispatchEvent(
-  //     new CustomEvent('barcode-scan-error', {
-  //       bubbles: true,
-  //       composed: true,
-  //       detail: { result }
-  //     })
-  //   )
-  // }
 }
 
 customElements.define('barcode-scanner', BarcodeScanner)
