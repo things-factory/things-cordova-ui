@@ -3,11 +3,11 @@ import { connect } from 'pwa-helpers/connect-mixin.js'
 import { store, PageView } from '@things-factory/shell'
 
 import logo from '../../assets/images/hatiolab-logo.png'
-import '../device-discover'
 import '../camera-gallery-button'
+import '../global-dd'
 import '../global-tts'
 import '../global-ocr'
-import '../barcode-scanner'
+import '../global-dd'
 
 class HybridUiExamplePage extends connect(store)(PageView) {
   static get styles() {
@@ -91,7 +91,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
       cameraImage: String,
       galleryImage1: String,
       galleryImage2: String,
-      barcodeText: String,
+      barcodeText: String
     }
   }
 
@@ -137,7 +137,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     return html`
       <global-tts></global-tts>
       <global-ocr></global-ocr>
-      <barcode-scanner></barcode-scanner>
+      <global-dd></global-dd>
       <!--<global-tts successCallBack="${this.dummyCallback}"></global-tts>-->
 
       <div class="tabbed">
@@ -183,7 +183,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
             <label for="tabbed3">devices</label>
           </h1>
           <div class="full">
-            <device-discover @device-discovered="${this._onDeviceDiscovered}"></device-discover>
+            <button @click="${this._onDeviceSearch}">DISCOVER</button>
             ${this.devices.map(
               i =>
                 html`
@@ -301,13 +301,13 @@ class HybridUiExamplePage extends connect(store)(PageView) {
     console.warn(result)
   }
 
-  _onDeviceDiscovered(e) {
-    if (!e.detail) {
-      return
-    }
-
-    var result = e.detail.result
-    this.devices = [...this.devices, result]
+  _onDeviceSearch(e) {
+    DD.search(null, response => {
+      var result = response
+      this.devices = [...this.devices, result]
+    }, error => {
+      console.warn(error)
+    })
   }
 
   _onSpeak1(e) {
@@ -349,12 +349,15 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   }
 
   _onScanBarcode() {
-    SCANNER.scan(result => {
-      // {text: "91250728", format: "EAN_8", cancelled: false}
-      this.barcodeText = result.text
-    }, error => {
-      console.log(error)
-    })
+    SCANNER.scan(
+      result => {
+        // {text: "91250728", format: "EAN_8", cancelled: false}
+        this.barcodeText = result.text
+      },
+      error => {
+        console.log(error)
+      }
+    )
   }
 }
 

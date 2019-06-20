@@ -141,35 +141,37 @@ var ssdplogic = `
         localStorage.setItem('things-factory.shell.BASE_URL', location.origin)
       }
 
-      document.addEventListener(
-        'deviceready',
-        () => {
-          if (!ssdp) {
-            return
-          }
+      // 소스가 apk에 내장이 아닐때 서버주소를 얻어와야 함.
+      // document.addEventListener(
+      //   'deviceready',
+      //   () => {
+      //     if (!ssdp) {
+      //       return
+      //     }
 
-          ssdp.listen(
-            null,
-            (message) => {
-              console.log('listen success:', message)
-            },
-            error => {
-              console.warn('listen error:', error)
-            }
-          )
+      //     ssdp.listen(
+      //       null,
+      //       (message) => {
+      //         console.log('listen success:', message)
+      //       },
+      //       error => {
+      //         console.warn('listen error:', error)
+      //       }
+      //     )
 
-          // ssdp.search(
-          //   this.st,
-          //   result => {
-          //     console.log('search success:', result)
-          //   },
-          //   error => {
-          //     console.log('search error:', error)
-          //   }
-          // )
-        },
-        false
-      );
+      //     ssdp.search(
+      //       this.st,
+      //       result => {
+      //         console.log('search success:', result)
+      //         // TODO: fix app server url reload
+      //       },
+      //       error => {
+      //         console.log('search error:', error)
+      //       }
+      //     )
+      //   },
+      //   false
+      // );
     </script>
 `
 
