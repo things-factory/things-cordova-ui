@@ -120,7 +120,7 @@ class GlobalDd extends connect(store)(LitElement) {
           // } else {
           //   this.successCallback.call(this, result)
           // }
-          successCallback.call(this, result)
+          successCallback && successCallback.call(this, result)
         },
         error => {
           // if (typeof this.errorCallback === 'string') {
@@ -128,7 +128,7 @@ class GlobalDd extends connect(store)(LitElement) {
           // } else {
           //   this.errorCallback.call(this, error)
           // }
-          errorCallback.call(this, error)
+          errorCallback && errorCallback.call(this, error)
         }
       )
     } else if (this.discoverType === 'D') {
