@@ -141,7 +141,7 @@ var ssdplogic = `
         localStorage.setItem('things-factory.shell.BASE_URL', location.origin)
       }
 
-      // 소스가 apk에 내장이 아닐때 서버주소를 얻어와야 함.
+      // 소스가 apk에 내장이 아닐때는 src서버주소도 얻어와야 함.
       // document.addEventListener(
       //   'deviceready',
       //   () => {
