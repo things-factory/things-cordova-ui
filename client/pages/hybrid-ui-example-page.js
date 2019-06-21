@@ -7,7 +7,7 @@ import '../camera-gallery-button'
 import '../global-dd'
 import '../global-tts'
 import '../global-ocr'
-import '../global-dd'
+import '../global-nfc'
 import '../barcode-scanner'
 
 class HybridUiExamplePage extends connect(store)(PageView) {
@@ -139,6 +139,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
       <global-tts></global-tts>
       <global-ocr></global-ocr>
       <global-dd></global-dd>
+      <global-nfc></global-nfc>
       <barcode-scanner></barcode-scanner>
       <!--<global-tts successCallBack="${this.dummyCallback}"></global-tts>-->
 
@@ -258,6 +259,9 @@ class HybridUiExamplePage extends connect(store)(PageView) {
             <label for="tabbed7">NFC</label>
           </h1>
           <div class="full">
+            <input style="width: 80%" value="${this.nfcWriteText}"></input>
+            <button @click="${this._onWriteNfc}">write</button>
+            <input style="width: 80%" value="${this.nfcReadText}"></input>
           </div>
         </section>
 
@@ -271,6 +275,21 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         </section>
       </div>
     `
+  }
+
+  connectedCallback() {
+    NFC.nfcAddListener(e => {
+      console.log(e.tag)
+      this.nfcReadText = e.tag
+    }, result => {
+      console.log(result)
+    }, error => {
+      console.log(error)
+    })
+  }
+
+  disconnectedCallback() {
+    //NFC.nfcRemoveListener()
   }
 
   updated(changedProps) {
@@ -378,6 +397,14 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         console.log(error)
       }
     )
+  }
+
+  _onWriteNfc() {
+    NFC.write(this.nfcWriteText, result => {
+      console.log(result)
+    }, error => {
+      console.log(error)
+    })
   }
 }
 
