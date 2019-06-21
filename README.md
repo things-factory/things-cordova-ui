@@ -21,3 +21,7 @@
 >- serve static file
 ### 7. yarn start:android
 >- apk를 build하여 연결된 기기에서 실행시킨다.
+
+## SSDP연관프로젝트:
+things-factory/cordova-plugin-ssdp
+things-factory/device-discover-node
