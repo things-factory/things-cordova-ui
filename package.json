@@ -25,21 +25,13 @@
     "copy:debug": "cp -a dist-client/* www",
     "reinstall:plugin": "cordova plugin remove cordova-plugin-ssdp && cordova plugin add https://github.com/things-factory/cordova-plugin-ssdp.git",
     "start:android": "npm run build:mobile && npm run copy:debug && cordova run android",
-    "start:electron": "electron electron/main.js",
-    "restart:android": "npm run build:client && npm run reinstall:plugin && npm run start:android"
+    "start:electron": "electron electron/main.js"
   },
   "dependencies": {
     "@things-factory/layout-base": "*",
     "@things-factory/shell": "*",
     "cordova-android": "^8.0.0",
-    "cordova-plugin-android-fingerprint-auth": "^1.5.0",
-    "cordova-plugin-camera": "4.0.3",
-    "cordova-plugin-mobile-ocr": "3.1.1",
-    "cordova-plugin-ssdp": "git+https://github.com/things-factory/cordova-plugin-ssdp.git",
-    "cordova-plugin-tts": "0.2.3",
-    "cordova-plugin-whitelist": "^1.3.3",
-    "device-discover-node": "git+https://github.com/things-factory/device-discover-node.git",
-    "phonegap-plugin-barcodescanner": "8.0.1"
+    "device-discover-node": "git+https://github.com/things-factory/device-discover-node.git"
   },
   "devDependencies": {
     "@things-factory/auth-ui-jwt": "*",
