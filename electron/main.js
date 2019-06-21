@@ -59,7 +59,9 @@ function createWindow() {
 
   // 'urn:things-factory:device:browser:chrome', 
   dd.listen(message => {
-    win.webContents.send('discovered-device', message)
+    console.log(message)
+
+    win.webContents.send('discovered-device', message)  // node -> ui
   })
 
   ipcMain.on('search-device', (e, st) => {

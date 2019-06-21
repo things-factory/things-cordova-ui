@@ -45,14 +45,6 @@ class GlobalDd extends connect(store)(LitElement) {
 
     this.st = 'urn:things-factory:device:all:all' // FIXME
 
-    document.addEventListener(
-      'deviceready',
-      () => {
-        this.listen()
-      },
-      false
-    )
-
     window.DD = this
   }
 
@@ -64,11 +56,6 @@ class GlobalDd extends connect(store)(LitElement) {
         let electron = require('electron')
         if (electron) {
           this.discoverType = 'D'
-          let ipcRenderer = electron.ipcRenderer
-          ipcRenderer.on('discovered-device', (e, response) => {
-            this._discoverDeviceCallback.call(this, response)
-          })
-
           this.electron = electron
         }
       } catch (e) {
@@ -120,7 +107,7 @@ class GlobalDd extends connect(store)(LitElement) {
           // } else {
           //   this.successCallback.call(this, result)
           // }
-          successCallback && successCallback.call(this, result)
+          successCallback && successCallback.call(this, json)
         },
         error => {
           // if (typeof this.errorCallback === 'string') {
@@ -133,54 +120,63 @@ class GlobalDd extends connect(store)(LitElement) {
       )
     } else if (this.discoverType === 'D') {
       const ipcRenderer = this.electron.ipcRenderer
+      
+      if (ipcRenderer._events && !ipcRenderer._events['discovered-device']) {
+        ipcRenderer.on('discovered-device', (e, result) => {
+          let json = this.toJson(result)
+          successCallback.call(this, JSON.stringify(json))
+        })
+      }
+
       if (ipcRenderer) {
-        ipcRenderer.send('search-device', st)
+        ipcRenderer.send('search-device', st) // ui -> node
       }
     }
   }
 
-  _listenSuccessCallback(result) {
-    console.log(result)
-  }
+  toJson(text) {
+    text = text.replace('"', '').trim()
+    var lines = text.split('\r\n')
+    var jsonStr = '{\r\n'
+    lines.forEach((l, i) => {
+      let parts = l.trim().split(':')
+      if (parts.length > 2) {
+        let s = l.indexOf(':')
+        parts = [ l.substring(0, s), l.substring(s+1) ]
+      } else if (parts.length < 2) {
+        return
+      }
 
-  _listenErrorCallback(result) {
-    console.log(result)
-  }
+      let temp = ''
+      parts.forEach((part, j) => {
+        temp += '"'
+        temp += part.trim()
+        temp += '"'
+      
+        if (j % 2 == 0) {
+          temp += ': '
+        }
+      })
 
-  _discoverDeviceCallback(result) {
+      if (i < lines.length - 1) {
+        temp += ','
+      } else {
+        temp += '\r\n'
+      }
+
+      jsonStr += temp
+    })
+    jsonStr += '}'
+
     try {
-      var info = JSON.parse(result)
-    } catch (e) {
+      console.log(jsonStr)
+      var json = JSON.parse(jsonStr)
+    } catch(e) {
       console.warn(e)
     }
 
-    if (!info || !info.location) {
-      return
-    }
-
-    // TODO if update state
-    this.dispatchEvent(
-      new CustomEvent('device-discovered', {
-        bubbles: true,
-        composed: true,
-        detail: { result: result }
-      })
-    )
+    return json
   }
-
-  // successCallback(result) {
-  //   this._discoverDeviceCallback(result)
-  // }
-
-  // errorCallback(result) {
-  //   this.dispatchEvent(
-  //     new CustomEvent('ssdp-search-error', {
-  //       bubbles: true,
-  //       composed: true,
-  //       detail: { result }
-  //     })
-  //   )
-  // }
 
   stateChanged(state) {
     // state

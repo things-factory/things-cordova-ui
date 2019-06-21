@@ -8,6 +8,7 @@ import '../global-dd'
 import '../global-tts'
 import '../global-ocr'
 import '../global-dd'
+import '../barcode-scanner'
 
 class HybridUiExamplePage extends connect(store)(PageView) {
   static get styles() {
@@ -138,6 +139,7 @@ class HybridUiExamplePage extends connect(store)(PageView) {
       <global-tts></global-tts>
       <global-ocr></global-ocr>
       <global-dd></global-dd>
+      <barcode-scanner></barcode-scanner>
       <!--<global-tts successCallBack="${this.dummyCallback}"></global-tts>-->
 
       <div class="tabbed">
@@ -180,10 +182,11 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         <input name="tabbed" id="tabbed3" type="radio" />
         <section>
           <h1>
-            <label for="tabbed3">devices</label>
+            <label for="tabbed3">DEVICES</label>
           </h1>
           <div class="full">
             <button @click="${this._onDeviceSearch}">DISCOVER</button>
+            <button @click="${this._onDeviceClear}">CLEAR</button>
             ${this.devices.map(
               i =>
                 html`
@@ -252,7 +255,16 @@ class HybridUiExamplePage extends connect(store)(PageView) {
         <input name="tabbed" id="tabbed7" type="radio" />
         <section>
           <h1>
-            <label for="tabbed7">FP</label>
+            <label for="tabbed7">NFC</label>
+          </h1>
+          <div class="full">
+          </div>
+        </section>
+
+        <input name="tabbed" id="tabbed8" type="radio" />
+        <section>
+          <h1>
+            <label for="tabbed8">FP</label>
           </h1>
           <div class="full">
           </div>
@@ -302,12 +314,20 @@ class HybridUiExamplePage extends connect(store)(PageView) {
   }
 
   _onDeviceSearch(e) {
-    DD.search(null, response => {
-      var result = response
-      this.devices = [...this.devices, result]
-    }, error => {
-      console.warn(error)
-    })
+    DD.search(
+      null,
+      response => {
+        var result = response
+        this.devices = [...this.devices, result]
+      },
+      error => {
+        console.warn(error)
+      }
+    )
+  }
+
+  _onDeviceClear(e) {
+    this.devices = []
   }
 
   _onSpeak1(e) {
