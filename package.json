@@ -1,6 +1,6 @@
 {
   "name": "@things-factory/things-hybrid-ui",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "dist-server/index.js",
   "browser": "client/index.js",
   "things-factory": true,
@@ -28,21 +28,21 @@
     "start:electron": "electron electron/main.js"
   },
   "dependencies": {
-    "@things-factory/layout-base": "*",
-    "@things-factory/shell": "*",
+    "@things-factory/layout-base": "^2.0.0",
+    "@things-factory/shell": "^2.0.0",
     "cordova-android": "^8.0.0",
     "device-discover-node": "git+https://github.com/things-factory/device-discover-node.git"
   },
   "devDependencies": {
-    "@things-factory/auth-ui-jwt": "*",
-    "@things-factory/i18n-ui": "*",
-    "@things-factory/layout-ui": "*",
-    "@things-factory/menu-provider": "*",
-    "@things-factory/menu-ui": "*",
-    "@things-factory/more-ui": "*",
-    "@things-factory/print-ui": "*",
-    "@things-factory/resource-ui": "*",
-    "@things-factory/setting-ui": "*",
+    "@things-factory/auth-ui-jwt": "^2.0.0",
+    "@things-factory/i18n-ui": "^2.0.0",
+    "@things-factory/layout-ui": "^2.0.0",
+    "@things-factory/menu-provider": "^2.0.0",
+    "@things-factory/menu-ui": "^2.0.0",
+    "@things-factory/more-ui": "^2.0.0",
+    "@things-factory/print-ui": "^2.0.0",
+    "@things-factory/resource-ui": "^2.0.0",
+    "@things-factory/setting-ui": "^2.0.0",
     "add": "^2.0.6",
     "electron": "^5.0.3",
     "insert-line": "^1.1.0"
